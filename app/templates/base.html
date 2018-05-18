@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!--{% if title %}-->
+        <!--<title>{{title}} - help system</title>-->
+        <!--{% else %}-->
+        <!--<title>Welcome to help system</title>-->
+        <!--{% endif %}-->
+
+        <link  href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+        <link  href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    </head>
+    <body>
+         <div style="text-align: center">Reserve system</div>
+         <a href="{{ url_for('login') }}">Login</a>
+         <a href="{{ url_for('logout') }}">Logout</a>
+    <hr>
+         {% with messages = get_flashed_messages() %}
+         {% if messages %}
+         <ul>
+             {% for message in messages %}
+             <li>{{message}}</li>
+             {% endfor %}
+         </ul>
+         {% endif %}
+         {% endwith %}
+         {% block content %}{% endblock %}
+
+        <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    </body>
+
+</html>

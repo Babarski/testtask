@@ -1,0 +1,153 @@
+{% extends "base.html"%}
+{% block content %}
+<script>
+var TableArray = []
+document.addEventListener('click', function ( e ) {
+    var element = document.getElementById(e.target.id)
+    if (element.classList.contains('tables')){
+        element.classList.remove('tables')
+        element.classList.add('tablesSelected')
+        TableArray.push(element.id)
+        var form = document.getElementById("reserve-form")
+        form.style.display="inline"
+        }
+    else if (element.classList.contains('tablesSelected')){
+        element.classList.remove('tablesSelected')
+        element.classList.add('tables')
+        var index = TableArray.indexOf(element.id)
+        if (index > -1){
+            TableArray.splice(index, 1)
+        }
+        if (TableArray.length == 0){
+        var form = document.getElementById("reserve-form")
+        form.style.display="none"
+        }
+    }
+});
+
+function sendData(){
+
+   var data = new Object();
+   data.name = document.getElementById('name').value
+   data.email = document.getElementById('email').value
+   data.date = '{{ date }}'
+   data.tables = TableArray.join(",");
+
+   $.post(
+        url = "{{ url_for('index') }}",
+        data = data
+   );
+   }
+
+function nextDay(){
+   var data1 = new Object();
+   data1.date = '{{ date }}'
+    $.post(
+        url = "{{ url_for('nextday') }}",
+        data = data1
+    );
+   }
+
+function previousDay(){
+   var data1 = new Object();
+   data1.date = '{{ date }}'
+    $.post(
+        url = "{{ url_for('previousday') }}",
+        data = data1
+    );
+   }
+
+</script>
+
+<div class="container">
+
+    <form class="form-inline" method=POST action="{{ url_for('previousday') }}"  style="float:left;">
+        <input type="hidden" name="date" value="{{ date }}">
+        <button type="submit" class="form-control">Previous day </button>
+    </form>
+
+        <div class="control" style="float:left; margin-right: 20px; margin-left:20px;">Selected date - {{ date }}</div>
+
+    <form class="form-inline" method=POST action="{{ url_for('nextday') }}" style="float:left;">
+        <input type="hidden" name="date" value="{{ date }}">
+        <button type="submit" class="form-control">Next day </button>
+    </form>
+
+    <form method=POST action="{{ url_for('showdate') }}" class="form-inline">
+        <input id="date" type="date" class="input-group date form-control" name = "date" data-provide="datepicker">
+        <button type="submit" class="btn btn-primary btn-block form-control">Select date</button>
+    </form>
+</div>
+<div style="text-align: center;">
+    <label>Restaurant hall</label><br>
+    <div>Digit - number of seats</div>
+</div>
+
+<div id = "hall" style="
+    width:500px;
+    height:300px;
+    border:1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    ">
+
+</div>
+{% for table in tables %}
+    <script type="text/javascript">
+    function setTable(tableId, tableSizeW, tableSizeL, tableCoordW, tableCoordL, tableSeats, tableReserved, tableForm){
+        var newTable = document.createElement("div")
+        newTable.id = "table_"+tableId
+        if (tableReserved == '1'){
+            newTable.classList.add('tablesReserved')
+        }
+        else {
+            newTable.classList.add('tables');
+        }
+
+        newTable.style.width = 5*tableSizeW+"px"
+        newTable.style.height = 3*tableSizeL+"px"
+        newTable.style.border = "1px solid black"
+        newTable.style.position = "absolute"
+
+        newTable.innerHTML = tableSeats
+
+        if (tableForm == 'round'){
+            newTable.style.borderRadius = "50%"
+        }
+
+        elementMargins = (tableCoordL*3-3*tableSizeL/2)+"px "+((100-tableCoordW)*5 - 5*tableSizeW)+"px "+(100-tableCoordL)*3+"px "+(tableCoordW*5 )+"px"
+
+        newTable.style.margin=elementMargins
+        document.getElementById("hall").appendChild(newTable)
+    }
+    setTable('{{ table['id'] }}', '{{ table['sizeWidth'] }}', '{{ table['sizeLength'] }}', '{{ table['coordWidth'] }}', '{{ table['coordLength'] }}', '{{ table['seats'] }}', '{{ table['reserved'] }}', '{{ table['form'] }}')
+
+
+    </script>
+{% endfor %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <form id="reserve-form" style="display:none;">
+                <div class="form-group">
+
+                    <input type="text" class="form-control" id="name" placeholder="Name">
+                </div>
+                <div class="form-group">
+
+                    <input type="email" class="form-control" id="email" placeholder="Email">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" onclick="sendData()">Reserve</button>
+            </form>
+            <br>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+
+</script>
+{% endblock %}

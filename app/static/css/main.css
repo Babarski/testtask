@@ -1,0 +1,15 @@
+.tables {
+    background:white;
+}
+/* .tables:hover {
+    background:#ccc;
+} */
+.tablesSelected {
+    background: #7eca62;
+}
+.reserve-form-hide {
+    display: none;
+}
+.tablesReserved{
+   background:#777
+}
